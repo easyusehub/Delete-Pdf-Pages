@@ -25,7 +25,7 @@
 - Mobile-friendly & premium UI design.
 
 ## Visit Online
-🌐 [Delete PDF Pages Tool](https://easyusehub.github.io/Delete-PDF-Pages)
+🌐 [Delete PDF Pages Tool](https://easyusehub.github.io/Delete-Pdf-Pages/)
 
 ## Related Tools
 - Merge PDF
