@@ -1,111 +1,19 @@
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Body */
-body, html {
-    font-family: 'Segoe UI', sans-serif;
-    background: #ffffff;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Container */
-.container {
-    width: 90%;
-    max-width: 500px;
-    padding: 30px;
-    border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+.ad-container {
+    margin: 15px 0;
+    padding: 12px;
+    background: #f1f5f9;
+    border-radius: 10px;
     text-align: center;
-}
-
-/* Title */
-h2 {
-    margin-bottom: 20px;
+    font-size: 0.9rem;
     color: #1e293b;
-}
-
-/* Upload box */
-.upload {
-    padding: 30px;
-    border: 3px dashed #9333ea;
-    border-radius: 15px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #9333ea;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     transition: 0.3s;
 }
-.upload:hover {
-    background: #f5e6fa;
-    transform: scale(1.03);
-}
-
-/* Input */
-input[type="text"] {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-}
-
-/* Buttons */
-button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 12px;
-    background: #9333ea;
-    color: #fff;
-    transition: 0.3s;
-}
-button:hover {
-    background: #7e22ce;
-}
-
-/* Download button */
-#download-btn {
-    display: none;
-    background: #2563eb;
-}
-#download-btn:hover {
-    background: #1e40af;
-}
-
-/* Status */
-#status {
-    margin-top: 10px;
-    font-size: 0.95rem;
-    color: #475569;
-}
-
-/* Bottom buttons */
-.bottom-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 20px;
-}
-.bottom-buttons a {
+.ad-container a {
+    color: #2563eb;
     text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    background: #1e293b;
-    color: #fff;
     font-weight: 600;
-    transition: 0.3s;
 }
-.bottom-buttons a:hover {
-    background: #3b82f6;
+.ad-container a:hover {
+    text-decoration: underline;
 }
