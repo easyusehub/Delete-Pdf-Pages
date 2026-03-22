@@ -1,33 +1,114 @@
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🗑️ Delete PDF Pages | EasyUseHub</title>
-
-<link rel="stylesheet" href="assets/style.css">
+<style>
+body, html {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.container {
+    width: 90%;
+    max-width: 600px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+h2 { margin-bottom: 20px; color: #1e293b; }
+.upload {
+    padding: 25px;
+    border: 3px dashed #9333ea;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #9333ea;
+    transition: 0.3s;
+}
+.upload:hover { background: #f5e6fa; transform: scale(1.03); }
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 6px 0;
+    background: #9333ea;
+    color: #fff;
+    transition: 0.3s;
+}
+button:hover { background: #7e22ce; }
+#download-btn { display:none; background:#2563eb; }
+#download-btn:hover { background:#1e40af; }
+.pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+.page-item {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 5px;
+    text-align: center;
+    cursor: grab;
+    transition: 0.3s;
+}
+.page-item.selected { border-color: #ef4444; background: #fee2e2; }
+.page-item.dragging { opacity:0.5; }
+canvas { width:100%; height:auto; }
+#status { margin-top: 10px; color: #475569; }
+.bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+.bottom-buttons a {
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #fff;
+    font-weight: 600;
+}
+.bottom-buttons a:hover { background: #3b82f6; }
+/* Ad Placeholder */
+.ad-placeholder {
+    margin: 15px 0;
+    padding: 15px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    color: #999;
+    font-size: 0.9rem;
+    text-align: center;
+}
+</style>
 
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
 </head>
 <body>
 
 <div class="container">
-
 <h2>🗑️ Delete PDF Pages</h2>
 
-<!-- Top Ad -->
-<div class="ad-container">
-  <p>Sponsored: <a href="https://easyusehub.blogspot.com" target="_blank">Check out our other PDF tools</a></p>
-</div>
+<!-- Top Ad Placeholder -->
+<div class="ad-placeholder">Ad Placeholder</div>
 
 <div class="upload" onclick="document.getElementById('file').click()">📁 Upload PDF</div>
 <input type="file" id="file" accept="application/pdf" hidden>
 
 <div style="display:flex; gap:10px; margin-top:10px;">
-  <button onclick="selectAll()">✅ Select All</button>
-  <button onclick="deselectAll()">❌ Deselect All</button>
+<button onclick="selectAll()">✅ Select All</button>
+<button onclick="deselectAll()">❌ Deselect All</button>
 </div>
 
 <div id="pages-container" class="pages-grid"></div>
@@ -42,10 +123,8 @@
 <a href="#">🏠 Home</a>
 </div>
 
-<!-- Bottom Ad -->
-<div class="ad-container">
-  <p>Sponsored: <a href="https://easyusehub.blogspot.com" target="_blank">Try our free PDF watermark tool</a></p>
-</div>
+<!-- Bottom Ad Placeholder -->
+<div class="ad-placeholder">Ad Placeholder</div>
 
 </div>
 
@@ -55,23 +134,21 @@ let selectedPages = new Set();
 let draggedItem = null;
 let downloadUrl = '';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
+pdfjsLib.GlobalWorkerOptions.workerSrc = 
 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// PDF upload & render pages
 document.getElementById('file').addEventListener('change', async (e)=>{
     file = e.target.files[0];
     if(!file) return;
-    if(file.size > 30*1024*1024){ alert('❌ Max 30MB allowed'); return; }
-    document.getElementById('status').textContent = file.size>20*1024*1024 ? "⚠️ Large file! Processing..." : "Loading PDF...";
-
+    if(file.size>30*1024*1024){ alert('Max 30MB'); return; }
+    document.getElementById('status').textContent = "Loading PDF...";
     const buffer = await file.arrayBuffer();
     pdfDocLib = await PDFLib.PDFDocument.load(buffer);
     pdfJsDoc = await pdfjsLib.getDocument({data: buffer}).promise;
     const totalPages = pdfJsDoc.numPages;
 
     const container = document.getElementById('pages-container');
-    container.innerHTML = '';
+    container.innerHTML='';
     selectedPages.clear();
 
     for(let i=1;i<=totalPages;i++){
@@ -83,83 +160,76 @@ document.getElementById('file').addEventListener('change', async (e)=>{
         await page.render({canvasContext:canvas.getContext('2d'), viewport}).promise;
 
         const div = document.createElement('div');
-        div.className = 'page-item';
-        div.dataset.index = i-1;
-        div.innerHTML = `<small>Page ${i}</small>`;
+        div.className='page-item';
+        div.dataset.index=i-1;
+        div.innerHTML=`<small>Page ${i}</small>`;
         div.appendChild(canvas);
-
-        div.onclick = ()=> {
-            const idx = Number(div.dataset.index);
+        div.onclick=()=>{
+            const idx=Number(div.dataset.index);
             if(selectedPages.has(idx)){ selectedPages.delete(idx); div.classList.remove('selected'); }
             else{ selectedPages.add(idx); div.classList.add('selected'); }
         };
-
         container.appendChild(div);
     }
-
     enableDragAndDrop();
-    document.getElementById('status').textContent = `✔ ${totalPages} pages loaded`;
+    document.getElementById('status').textContent=`✔ ${totalPages} pages loaded`;
 });
 
-// Select / Deselect All
 function selectAll(){
-    const items = document.querySelectorAll('.page-item');
-    items.forEach((div,index)=>{
-        selectedPages.add(index);
+    document.querySelectorAll('.page-item').forEach((div,i)=>{
+        selectedPages.add(i);
         div.classList.add('selected');
     });
 }
 function deselectAll(){
-    const items = document.querySelectorAll('.page-item');
-    items.forEach((div,index)=>{
-        selectedPages.delete(index);
+    document.querySelectorAll('.page-item').forEach((div,i)=>{
+        selectedPages.delete(i);
         div.classList.remove('selected');
     });
 }
 
 // Drag & Drop
 function enableDragAndDrop(){
-    const items = document.querySelectorAll('.page-item');
+    const items=document.querySelectorAll('.page-item');
     items.forEach(item=>{
         item.setAttribute('draggable',true);
         item.addEventListener('dragstart',()=>{ draggedItem=item; item.classList.add('dragging'); });
         item.addEventListener('dragend',()=>{ draggedItem=null; item.classList.remove('dragging'); });
-        item.addEventListener('dragover', (e)=>{
+        item.addEventListener('dragover', e=>{
             e.preventDefault();
-            const container = document.getElementById('pages-container');
-            const afterElement = getDragAfterElement(container,e.clientY);
+            const container=document.getElementById('pages-container');
+            const afterElement=getDragAfterElement(container,e.clientY);
             if(afterElement==null) container.appendChild(draggedItem);
             else container.insertBefore(draggedItem, afterElement);
         });
     });
 }
 function getDragAfterElement(container,y){
-    const draggableElements = [...container.querySelectorAll('.page-item:not(.dragging)')];
+    const draggableElements=[...container.querySelectorAll('.page-item:not(.dragging)')];
     return draggableElements.reduce((closest,child)=>{
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height/2;
-        if(offset<0 && offset>closest.offset) return {offset:offset, element:child};
-        else return closest;
+        const box=child.getBoundingClientRect();
+        const offset=y-box.top-box.height/2;
+        if(offset<0 && offset>closest.offset) return {offset:offset,element:child};
+        return closest;
     },{offset:Number.NEGATIVE_INFINITY}).element;
 }
 
-// Delete Selected + Reorder
+// Delete pages
 async function deletePages(){
     if(!pdfDocLib){ alert('Upload PDF first'); return; }
-    const newPdf = await PDFLib.PDFDocument.create();
-    const items = document.querySelectorAll('.page-item');
+    const newPdf=await PDFLib.PDFDocument.create();
+    const items=document.querySelectorAll('.page-item');
     for(let i=0;i<items.length;i++){
-        const originalIndex = Number(items[i].dataset.index);
-        if(!selectedPages.has(originalIndex)){
-            const [page] = await newPdf.copyPages(pdfDocLib,[originalIndex]);
+        const idx=Number(items[i].dataset.index);
+        if(!selectedPages.has(idx)){
+            const [page]=await newPdf.copyPages(pdfDocLib,[idx]);
             newPdf.addPage(page);
         }
     }
-    const pdfBytes = await newPdf.save();
-    const blob = new Blob([pdfBytes], {type:'application/pdf'});
-    downloadUrl = URL.createObjectURL(blob);
-
-    const btn = document.getElementById('download-btn');
+    const pdfBytes=await newPdf.save();
+    const blob=new Blob([pdfBytes],{type:'application/pdf'});
+    downloadUrl=URL.createObjectURL(blob);
+    const btn=document.getElementById('download-btn');
     btn.style.display='block';
     btn.onclick=()=>{
         const a=document.createElement('a');
