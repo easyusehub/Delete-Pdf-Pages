@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -10,98 +10,17 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
-<style>
-/* Container & basic UI */
-body, html {
-    font-family: 'Segoe UI', sans-serif;
-    background: #fff;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.container {
-    width: 90%;
-    max-width: 600px;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    text-align: center;
-}
-h2 { margin-bottom: 20px; color: #1e293b; }
-
-/* Upload & input */
-.upload {
-    padding: 25px;
-    border: 3px dashed #9333ea;
-    border-radius: 15px;
-    cursor: pointer;
-    margin-bottom: 12px;
-    font-weight: 600;
-    color: #9333ea;
-    transition: 0.3s;
-}
-.upload:hover { background: #f5e6fa; transform: scale(1.03); }
-
-/* Buttons */
-button {
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 6px 0;
-    background: #9333ea;
-    color: #fff;
-    transition: 0.3s;
-}
-button:hover { background: #7e22ce; }
-#download-btn { display:none; background:#2563eb; }
-#download-btn:hover { background:#1e40af; }
-
-/* Pages Grid */
-.pages-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
-}
-.page-item {
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 5px;
-    text-align: center;
-    cursor: grab;
-    transition: 0.3s;
-}
-.page-item.selected { border-color: #ef4444; background: #fee2e2; }
-.page-item.dragging { opacity: 0.5; }
-canvas { width: 100%; height: auto; }
-
-/* Status & bottom buttons */
-#status { margin-top: 10px; color: #475569; }
-.bottom-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 20px;
-}
-.bottom-buttons a {
-    text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    background: #1e293b;
-    color: #fff;
-    font-weight: 600;
-    transition: 0.3s;
-}
-.bottom-buttons a:hover { background: #3b82f6; }
-</style>
 </head>
 <body>
 
 <div class="container">
+
 <h2>🗑️ Delete PDF Pages</h2>
+
+<!-- Top Ad -->
+<div class="ad-container">
+  <p>Sponsored: <a href="https://easyusehub.blogspot.com" target="_blank">Check out our other PDF tools</a></p>
+</div>
 
 <div class="upload" onclick="document.getElementById('file').click()">📁 Upload PDF</div>
 <input type="file" id="file" accept="application/pdf" hidden>
@@ -122,6 +41,12 @@ canvas { width: 100%; height: auto; }
 <a href="#">📂 All PDF Tools</a>
 <a href="#">🏠 Home</a>
 </div>
+
+<!-- Bottom Ad -->
+<div class="ad-container">
+  <p>Sponsored: <a href="https://easyusehub.blogspot.com" target="_blank">Try our free PDF watermark tool</a></p>
+</div>
+
 </div>
 
 <script>
@@ -130,12 +55,15 @@ let selectedPages = new Set();
 let draggedItem = null;
 let downloadUrl = '';
 
-// PDF upload
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+// PDF upload & render pages
 document.getElementById('file').addEventListener('change', async (e)=>{
     file = e.target.files[0];
     if(!file) return;
     if(file.size > 30*1024*1024){ alert('❌ Max 30MB allowed'); return; }
-    document.getElementById('status').textContent = file.size>20*1024*1024 ? "⚠️ Large file! Processing may take time..." : "Loading PDF...";
+    document.getElementById('status').textContent = file.size>20*1024*1024 ? "⚠️ Large file! Processing..." : "Loading PDF...";
 
     const buffer = await file.arrayBuffer();
     pdfDocLib = await PDFLib.PDFDocument.load(buffer);
@@ -195,7 +123,7 @@ function enableDragAndDrop(){
     items.forEach(item=>{
         item.setAttribute('draggable',true);
         item.addEventListener('dragstart',()=>{ draggedItem=item; item.classList.add('dragging'); });
-        item.addEventListener('dragend',()=>{ item.classList.remove('dragging'); });
+        item.addEventListener('dragend',()=>{ draggedItem=null; item.classList.remove('dragging'); });
         item.addEventListener('dragover', (e)=>{
             e.preventDefault();
             const container = document.getElementById('pages-container');
